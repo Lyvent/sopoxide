@@ -1,18 +1,18 @@
-import express, { Application, Request, Response } from 'express';
-import mongoose, { ConnectionOptions } from 'mongoose';
+import express, { Application } from 'express';
+import 'dotenv/config';
+
+import makeDB from './db/index';
 
 const app: Application = express();
 
-// Connect to MongoDB
-const URI: string = 'mongodb://localhost/lyventdb';
-const DBOptions: ConnectionOptions = {
-  useNewUrlParser: true,
-  useUnifiedTopology: true,
-};
+// Instantiate DB connection.
+makeDB();
 
-mongoose.connect(URI, DBOptions, () => {
-  console.log('Connected to DB');
-});
+// Import Routes
+// TODO: Add Route middleware that is imported for this module (app.ts).
+const storyRoutes = require('./routes/story');
+
+app.use('/story', storyRoutes);
 
 // Run the application
 const port: number = Number(process.env.PORT) || 5000;
