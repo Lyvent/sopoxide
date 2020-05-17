@@ -1,4 +1,4 @@
-import mongoose, { ConnectionOptions } from 'mongoose';
+import mongoose, { ConnectionOptions, Connection } from 'mongoose';
 
 const URI: string = process.env.DB_URI || 'mongodb://localhost/lyventdb';
 const DBOptions: ConnectionOptions = {
@@ -6,14 +6,18 @@ const DBOptions: ConnectionOptions = {
   useUnifiedTopology: true,
 };
 
-mongoose.connect(URI, DBOptions);
+const makeDB = async (): Promise<Connection> => {
+  mongoose.connect(URI, DBOptions);
 
-const db = mongoose.connection;
+  const db = mongoose.connection;
 
-// Handle connection events
-db.on('error', console.error.bind(console, 'Connection Error: '));
-db.once('open', () => {
-  console.log('Connected to DB.');
-});
+  // Handle connection events.
+  db.on('error', console.error.bind(console, 'Connection Error: '));
+  db.once('open', () => {
+    console.log('Connected to DB.');
+  });
 
-export default db;
+  return db;
+}
+
+export default makeDB;
