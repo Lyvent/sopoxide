@@ -1,9 +1,13 @@
 import express, { Application } from 'express';
+import bodyParser from 'body-parser';
 import 'dotenv/config';
 
 import makeDB from './db/index';
 
 const app: Application = express();
+
+// Middlewares
+app.use(bodyParser.json());
 
 // Instantiate DB connection.
 makeDB();
