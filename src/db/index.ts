@@ -1,6 +1,6 @@
 import mongoose, { ConnectionOptions } from 'mongoose';
 
-const URI: string = 'mongodb://localhost/lyventdb';
+const URI: string = process.env.DB_URI || 'mongodb://localhost/lyventdb';
 const DBOptions: ConnectionOptions = {
   useNewUrlParser: true,
   useUnifiedTopology: true,
