@@ -2,7 +2,7 @@ import express, { Application } from 'express';
 import bodyParser from 'body-parser';
 import 'dotenv/config';
 
-import makeDB from './db/index';
+import connectDB from './db/index';
 
 const app: Application = express();
 
@@ -10,7 +10,7 @@ const app: Application = express();
 app.use(bodyParser.json());
 
 // Instantiate DB connection.
-makeDB();
+connectDB();
 
 // Import Routes
 // TODO: Add Route middleware that is imported for this module (app.ts).

@@ -6,7 +6,7 @@ const DBOptions: ConnectionOptions = {
   useUnifiedTopology: true,
 };
 
-const makeDB = async (): Promise<Connection> => {
+const connectDB = async (): Promise<Connection> => {
   mongoose.connect(URI, DBOptions);
 
   const db = mongoose.connection;
@@ -20,4 +20,4 @@ const makeDB = async (): Promise<Connection> => {
   return db;
 };
 
-export default makeDB;
+export default connectDB;
