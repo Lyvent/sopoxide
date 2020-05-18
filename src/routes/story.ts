@@ -1,6 +1,5 @@
 import { Router, Request, Response } from 'express';
-
-// const Story = require('../models/Story');
+// import Story from "../models/Story";
 
 const router = Router();
 

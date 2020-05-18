@@ -9,6 +9,8 @@ const StorySchema = new Schema({
   // TODO: Add more related fields with validations.
 });
 
-// TODO: Add DAO.
+// Model
+const Story = mongoose.model('Story', StorySchema);
 
-module.exports = mongoose.model('Story', StorySchema);
+export default Story;
+export { Story, StorySchema };
