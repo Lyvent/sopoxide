@@ -5,7 +5,9 @@
     },
     "extends": [
         "eslint:recommended",
-        "plugin:@typescript-eslint/eslint-recommended"
+        "plugin:@typescript-eslint/eslint-recommended",
+        "plugin:@typescript-eslint/recommended",
+        "plugin:node/recommended"
     ],
     "globals": {
         "Atomics": "readonly",
@@ -13,12 +15,18 @@
     },
     "parser": "@typescript-eslint/parser",
     "parserOptions": {
-        "ecmaVersion": 11,
-        "sourceType": "module"
+        "sourceType": "module",
+        "ecmaFeatures": {
+            "modules": true
+        }
     },
     "plugins": [
         "@typescript-eslint"
     ],
     "rules": {
+        "quotes": ["error", "single"],
+        "node/no-missing-import": ["error", {
+            "tryExtensions": [".js", ".ts", ".json", ".node"]
+        }]
     }
 }

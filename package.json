@@ -2,11 +2,13 @@
   "name": "sopoxide",
   "version": "1.0.0",
   "description": "",
+  "type": "module",
   "main": "index.js",
   "scripts": {
     "dev": "nodemon src/app.ts",
     "prod": "tsc && node ./dist/app.js",
-    "build": "tsc -p ."
+    "build": "tsc -p .",
+    "pretest": "eslint --ignore-path .gitignore ."
   },
   "keywords": [],
   "author": "Zeth <zeth.leonardo@protonmail.com>",
@@ -17,6 +19,7 @@
     "@typescript-eslint/eslint-plugin": "^2.33.0",
     "@typescript-eslint/parser": "^2.33.0",
     "eslint": "^7.0.0",
+    "eslint-plugin-node": "^11.1.0",
     "nodemon": "^2.0.3",
     "ts-node": "^8.10.1",
     "typescript": "^3.9.2"
