@@ -1,15 +1,19 @@
 import express, { Application } from 'express';
-import bodyParser from 'body-parser';
 import 'dotenv/config';
+
+// Middleware
+import bodyParser from 'body-parser';
+import corsMiddleware from './middleware/cors';
 
 import connectDB from './db/index';
 
 const app: Application = express();
 
-// Middlewares
+// Instantiate Middlewares
 app.use(bodyParser.json());
+app.use(corsMiddleware);
 
-// Instantiate DB connection.
+// Create DB connection.
 connectDB();
 
 // Import Routes
