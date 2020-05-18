@@ -26,7 +26,8 @@
     "rules": {
         "quotes": ["error", "single"],
         "node/no-missing-import": ["error", {
-            "tryExtensions": [".js", ".ts", ".json", ".node"]
-        }]
+            "tryExtensions": [".js", ".ts", ".d.ts",".json", ".node"]
+        }],
+        "node/no-unsupported-features/es-syntax": ["error", { "ignores": ["modules"] }]
     }
 }
