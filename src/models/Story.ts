@@ -6,6 +6,11 @@ const StorySchema = new Schema({
     required: true,
   },
 
+  createdAt: {
+    type: Date,
+    required: true,
+  }
+
   // TODO: Add more related fields with validations.
 });
 
