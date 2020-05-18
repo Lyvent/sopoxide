@@ -14,4 +14,4 @@ router.post('/create', (req: Request, res: Response) => {
   res.send(`Hello ${name}`);
 });
 
-module.exports = router;
+export { router as storyRoutes }; 

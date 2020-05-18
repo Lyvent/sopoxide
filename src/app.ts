@@ -14,7 +14,7 @@ makeDB();
 
 // Import Routes
 // TODO: Add Route middleware that is imported for this module (app.ts).
-const storyRoutes = require('./routes/story');
+import { storyRoutes } from './routes/story';
 
 app.use('/story', storyRoutes);
 

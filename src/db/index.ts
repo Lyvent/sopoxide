@@ -18,6 +18,6 @@ const makeDB = async (): Promise<Connection> => {
   });
 
   return db;
-}
+};
 
 export default makeDB;
