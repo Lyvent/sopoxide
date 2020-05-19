@@ -28,6 +28,8 @@
         "node/no-missing-import": ["error", {
             "tryExtensions": [".js", ".ts", ".d.ts",".json", ".node"]
         }],
-        "node/no-unsupported-features/es-syntax": ["error", { "ignores": ["modules"] }]
+        "node/no-unsupported-features/es-syntax": ["error", { "ignores": ["modules"] }],
+        "@typescript-eslint/ban-ts-ignore": "off",
+        "no-empty": "off"
     }
 }
