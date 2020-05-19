@@ -9,6 +9,9 @@ const DBOptions: ConnectionOptions = {
 const connectDB = async (): Promise<Connection> => {
   mongoose.connect(URI, DBOptions);
 
+  // Prevent (node:101668) DeprecationWarning.
+  mongoose.set('useCreateIndex', true);
+
   const db = mongoose.connection;
 
   // Handle connection events.
