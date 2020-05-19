@@ -9,6 +9,7 @@ const StorySchema = new Schema({
   createdAt: {
     type: Date,
     required: true,
+    default: Date.now
   }
 
   // TODO: Add more related fields with validations.
@@ -18,4 +19,4 @@ const StorySchema = new Schema({
 const Story = mongoose.model('Story', StorySchema);
 
 export default Story;
-export { Story, StorySchema };
+export { StorySchema };
