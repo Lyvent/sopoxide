@@ -1,8 +1,10 @@
 import { Schema, Document, model } from 'mongoose';
+import uniqueValidator from 'mongoose-unique-validator';
 import bcrypt from 'bcrypt';
 
 const emailRegex = /^(([^<>()\]\\.,;:\s@"]+(\.[^<>()\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
 const nameRegex = /^[A-Za-z]+((\s)?(('||\.)?([A-Za-z])+))*$/;
+const usernameRegex = /^([A-Za-z0-9_](?:(?:[A-Za-z0-9_]|(?:\.(?!\.))){0,28}(?:[A-Za-z0-9_]))?)$/;
 
 const UserSchema = new Schema({
   email: {
@@ -14,6 +16,17 @@ const UserSchema = new Schema({
     validate: {
       validator: emailRegex,
       message: 'Email is not valid!',
+    }
+  },
+
+  username: {
+    type: String,
+    required: [true, 'Username is a required value.'],
+    unique: true,
+    maxlength: 15,
+    validate: {
+      validator: usernameRegex,
+      message: 'Invalid username.'
     }
   },
 
@@ -31,6 +44,14 @@ const UserSchema = new Schema({
     type: String,
     required: [true, 'What\'s the password? Password is a required value.'],
   },
+
+
+  joinedAt: {
+    type: Date,
+    required: true,
+    default: Date.now
+  },
+
 
   // Social Handles - Supported.
   instaHandle: {
@@ -58,12 +79,14 @@ UserSchema.pre('save', async function(next) {
   next();
 });
 
-// Methods
+// Methods and Plugins
 UserSchema.methods.isValidPassword = async function(password: string): Promise<boolean> {
   // Compares hashed password and user password to see if it matches.
   const matches: boolean = await bcrypt.compare(password, this.password);
   return matches;
 }
+
+UserSchema.plugin(uniqueValidator);
 
 // Extend User Document
 interface UserDoc extends Document {
