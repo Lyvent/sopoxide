@@ -1,4 +1,5 @@
 import mongoose, { ConnectionOptions, Connection } from 'mongoose';
+import logger from '../middleware/logger';
 
 const URI: string = process.env.DB_URI || 'mongodb://localhost/lyventdb';
 const DBOptions: ConnectionOptions = {
@@ -15,10 +16,8 @@ const connectDB = async (): Promise<Connection> => {
   const db = mongoose.connection;
 
   // Handle connection events.
-  db.on('error', console.error.bind(console, 'Connection Error: '));
-  db.once('open', () => {
-    console.log('Connected to DB.');
-  });
+  db.on('error', err => logger.log('error', `DB Connection Error: \n${err}`));
+  db.once('open', () => logger.log('info', 'Connected to DB.'));
 
   return db;
 };
