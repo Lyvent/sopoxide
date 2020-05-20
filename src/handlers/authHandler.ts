@@ -1,4 +1,7 @@
 import { Request, Response } from 'express';
+import { issueJWT } from '../middleware/auth';
+import { isEmpty, mapValues } from 'lodash';
+import logger from '../middleware/logger';
 import User from '../models/User';
 
 // interface LoginData {
@@ -13,51 +16,70 @@ interface SignUpData {
   username: string;
 }
 
-// interface ResponseData {
-//   token: string;
-//   message: string;
-//   user: UserDoc;
-// }
-
 const signUp = async (req: Request, res: Response) => {
-  // Grab body json content.
+  // Grab body json content and check if it exists.
   const signUpData: SignUpData = req.body;
+  if (isEmpty(signUpData)) {
+    return res.status(400).json({
+      message: 'Sign up data not found!',
+      error: 'data_404',
+    });
+  }
 
  // Create a new user
   // TODO: Add validation error handler.
   const user = new User({
     email: signUpData.email,
     fullName: signUpData.fullName,
+    username: signUpData.username,
+    password: signUpData.password,
   });
 
-  // Perform validations
-  const error = user.validateSync();
-  if (error) {
+  // Perform model validations.
+  const validationErr = user.validateSync();
+  if (validationErr) {
+    const fieldErrors = mapValues(validationErr.errors, 'message');
+
     return res.status(400).json({
       message: 'Registration failed.',
-      error: error.errors
+      errors: fieldErrors
     });
   }
 
-  // Filter sensitive user information.
-  const newUser = await user.save(function(err) {
-    // Handle save error.
-    if (err) {
-      console.error(err);
+  // Try to save the user and send the data back to client.
+  try {
+    const newUser = await user.save();
 
-      return res.status(500).json({
-        error: 'server_error',
-        message: 'An error occured!'
+    logger.log('info', `User created ${newUser}`);
+
+    // Filter sensitive user information.
+
+    const jwt = issueJWT(newUser);
+
+    res.status(201).json({
+      message: 'Signed up successfully.',
+      user: newUser,
+      jwt: jwt,
+    });
+
+  } catch (error) {
+    // Check if it's a duplicate validation error.
+    if (error.name === 'ValidationError') {
+      const errors = mapValues(error.errors, 'message');
+
+      return res.status(403).json({
+        message: 'A validation error occured.',
+        errors: errors
       });
     }
-  });
 
-  // Generate access token
+    logger.log('error', `An error occured while saving -> ${error}`);
 
-  res.status(201).json({
-    message: 'Signed up successfully.',
-    user: newUser
-  })
+    res.status(500).json({
+      error: 'server_error',
+      message: 'An error occured',
+    });
+  }
 };
 
 export { signUp };
