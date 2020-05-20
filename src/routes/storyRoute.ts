@@ -1,9 +1,9 @@
+import passport from 'passport';
 import { Router, Request, Response } from 'express';
-// import Story from "../models/Story";
 
 const router = Router();
 
-router.get('/', (req: Request, res: Response) => {
+router.get('/', passport.authenticate('jwt', { session: false }),(req: Request, res: Response) => {
   res.status(200);
   res.send('Henlo friend.');
 });
