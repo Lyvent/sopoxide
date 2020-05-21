@@ -1,8 +1,8 @@
 // INFO: Index for route imports.
 import { Router } from 'express';
 
-import { authRoutes } from './authRoute';
-import { storyRoutes } from './storyRoute';
+import { authRoutes } from './authRouter';
+import { storyRoutes } from './storyRouter';
 
 const router = Router();
 
