@@ -4,10 +4,12 @@ import { isEmpty, mapValues } from 'lodash';
 import logger from '../middleware/logger';
 import User from '../models/User';
 
-// interface LoginData {
-//   email: string;
-//   password: string;
-// }
+import { badRequestResponse, serverErrResponse } from '../helpers/response';
+
+interface LoginData {
+  email: string;
+  password: string;
+}
 
 interface SignUpData {
   email: string;
@@ -16,14 +18,32 @@ interface SignUpData {
   username: string;
 }
 
+const logIn = async (req: Request, res: Response) => {
+  // Grab json body content and check if it exists.
+  const loginData: LoginData = req.body;
+  if (isEmpty(loginData)) {
+    badRequestResponse(res, 'Login data not found!');
+    return;
+  }
+
+  // Check if the user exists.
+  // TODO: Implement user querying.
+  const user = await User.findOne();
+
+  if (!user) {
+    return res.status(404).json({
+      message: 'There are no accounts that exist with this email.',
+      error: 'user_404'
+    });
+  }
+};
+
 const signUp = async (req: Request, res: Response) => {
-  // Grab body json content and check if it exists.
+  // Grab json body content and check if it exists.
   const signUpData: SignUpData = req.body;
   if (isEmpty(signUpData)) {
-    return res.status(400).json({
-      message: 'Sign up data not found!',
-      error: 'data_404',
-    });
+    badRequestResponse(res, 'Sign up data not found!');
+    return;
   }
 
  // Create a new user
@@ -40,6 +60,7 @@ const signUp = async (req: Request, res: Response) => {
   if (validationErr) {
     const fieldErrors = mapValues(validationErr.errors, 'message');
 
+    // Validation error response.
     return res.status(400).json({
       message: 'Registration failed.',
       errors: fieldErrors
@@ -75,11 +96,8 @@ const signUp = async (req: Request, res: Response) => {
 
     logger.log('error', `An error occured while saving -> ${error}`);
 
-    res.status(500).json({
-      error: 'server_error',
-      message: 'An error occured',
-    });
+    serverErrResponse(res);
   }
 };
 
-export { signUp };
+export { logIn, signUp };
