@@ -1,10 +1,16 @@
 import { Request, Response } from 'express';
-import { issueJWT } from '../middleware/auth';
+import { issueJWT, JWTData } from '../middleware/auth';
 import { isEmpty, mapValues } from 'lodash';
 import logger from '../middleware/logger';
 import User from '../models/User';
 
 import { badRequestResponse, serverErrResponse } from '../helpers/response';
+
+interface AuthResponse {
+  message: string;
+  user: JSON;
+  jwt: JWTData;
+}
 
 interface LoginData {
   email: string;
@@ -26,15 +32,42 @@ const logIn = async (req: Request, res: Response) => {
     return;
   }
 
-  // Check if the user exists.
-  // TODO: Implement user querying.
-  const user = await User.findOne();
+  try {
+    // Check if the user exists.
+    const user = await User.findOne({ email: loginData.email });
 
-  if (!user) {
-    return res.status(404).json({
-      message: 'There are no accounts that exist with this email.',
-      error: 'user_404'
-    });
+    if (!user) {
+      return res.status(404).json({
+        message: 'There are no accounts that exist with this email.',
+        error: 'user_404'
+      });
+    }
+
+    // Validate user password
+    const validPassword = await user.isValidPassword(loginData.password);
+
+    if (!validPassword) {
+      return res.status(403).json({
+        message: 'Incorrect password, check login credentials.',
+        error: 'password_incorrect'
+      });
+    }
+
+    // Issue a token
+    const jwt = issueJWT(user);
+
+    const loginResponse: AuthResponse = {
+      message: 'Logged in successfully',
+      user: user.toJSON(),
+      jwt: jwt,
+    }
+
+    res.status(200).json(loginResponse);
+
+  } catch (error) {
+    logger.log('error', `An error occured while logging in -> ${error}`);
+    
+    serverErrResponse(res);
   }
 };
 
@@ -73,15 +106,16 @@ const signUp = async (req: Request, res: Response) => {
 
     logger.log('info', `User created ${newUser}`);
 
-    // Filter sensitive user information.
-
+    // Generate new token.
     const jwt = issueJWT(newUser);
 
-    res.status(201).json({
+    const authResponse: AuthResponse = {
       message: 'Signed up successfully.',
-      user: newUser,
+      user: newUser.toJSON(),
       jwt: jwt,
-    });
+    }
+
+    res.status(201).json(authResponse);
 
   } catch (error) {
     // Check if it's a duplicate validation error.
