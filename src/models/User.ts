@@ -2,9 +2,11 @@ import { Schema, Document, model } from 'mongoose';
 import uniqueValidator from 'mongoose-unique-validator';
 import bcrypt from 'bcrypt';
 
-const emailRegex = /^(([^<>()\]\\.,;:\s@"]+(\.[^<>()\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
-const nameRegex = /^[A-Za-z]+((\s)?(('||\.)?([A-Za-z])+))*$/;
-const usernameRegex = /^([A-Za-z0-9_](?:(?:[A-Za-z0-9_]|(?:\.(?!\.))){0,28}(?:[A-Za-z0-9_]))?)$/;
+import {
+  emailRegex,
+  usernameRegex,
+  nameRegex
+} from '../helpers/regex';
 
 const UserSchema = new Schema({
   email: {
@@ -63,13 +65,13 @@ const UserSchema = new Schema({
   },
 
   twitterHandle: {
-
     type: String,
   },
 });
 
 // Hooks/Middleware
 UserSchema.pre('save', async function(next) {
+  // INFO: This hashes the password before saving the document into the DB.
   // @ts-ignore
   const hash = await bcrypt.hash(this.password, 10);
 
@@ -81,10 +83,18 @@ UserSchema.pre('save', async function(next) {
 
 // Methods and Plugins
 UserSchema.methods.isValidPassword = async function(password: string): Promise<boolean> {
-  // Compares hashed password and user password to see if it matches.
+  // INFO: Compares hashed password and user password to see if it matches.
   const matches: boolean = await bcrypt.compare(password, this.password);
   return matches;
 }
+
+UserSchema.set('toJSON', {
+  getters: true,
+  transform: (_doc, ret, _options) => {
+    delete ret.password;
+    return ret
+  }
+});
 
 UserSchema.plugin(uniqueValidator);
 
