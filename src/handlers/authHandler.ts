@@ -80,7 +80,6 @@ const signUp = async (req: Request, res: Response) => {
   }
 
  // Create a new user
-  // TODO: Add validation error handler.
   const user = new User({
     email: signUpData.email,
     fullName: signUpData.fullName,
