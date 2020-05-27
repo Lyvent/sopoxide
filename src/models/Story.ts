@@ -19,6 +19,14 @@ const StorySchema = new Schema({
     required: true
   },
 
+  // Boosts [User] (They are equivalent to likes).
+  boosts: [{
+    type: Schema.Types.ObjectId,
+    ref: 'User'
+  }],
+
+  tags: [String],
+
   createdAt: {
     type: Date,
     required: true,
