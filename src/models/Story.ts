@@ -1,4 +1,4 @@
-import mongoose, { Schema } from 'mongoose';
+import { Schema, model } from 'mongoose';
 
 const StorySchema = new Schema({
   title: {
@@ -33,7 +33,7 @@ const StorySchema = new Schema({
 });
 
 // Model
-const Story = mongoose.model('Story', StorySchema);
+const Story = model('Story', StorySchema);
 
 export default Story;
 export { StorySchema };
