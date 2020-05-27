@@ -56,17 +56,10 @@ const UserSchema = new Schema({
 
 
   // Social Handles - Supported.
-  instaHandle: {
-    type: String,
-  },
-
-  facebookLink: {
-    type: String,
-  },
-
-  twitterHandle: {
-    type: String,
-  },
+  socialMediaHandles: {
+    type: Map,
+    of: String
+  }
 });
 
 // Hooks/Middleware
