@@ -27,13 +27,9 @@ const StorySchema = new Schema({
 
   tags: [String],
 
-  createdAt: {
-    type: Date,
-    required: true,
-    default: Date.now
-  }
-
-  // TODO: Add more related fields with validations.
+}, {
+  // Assign timestamps to track changes.
+  timestamps: true
 });
 
 // Model

@@ -8,6 +8,8 @@ import {
   nameRegex
 } from '../helpers/regex';
 
+const roles: string[] = ['user', 'moderator', 'admin'];
+
 const UserSchema = new Schema({
   email: {
     type: String,
@@ -47,7 +49,6 @@ const UserSchema = new Schema({
     required: [true, 'What\'s the password? Password is a required value.'],
   },
 
-
   joinedAt: {
     type: Date,
     required: true,
@@ -59,6 +60,12 @@ const UserSchema = new Schema({
   socialMediaHandles: {
     type: Map,
     of: String
+  }
+
+}, {
+  // Assign timestamps to track changes.
+  timestamps: {
+    createdAt: 'joinedAt',
   }
 });
 
@@ -83,7 +90,7 @@ UserSchema.methods.isValidPassword = async function(password: string): Promise<b
 
 UserSchema.set('toJSON', {
   getters: true,
-  transform: (_doc, ret, _options) => {
+  transform: (_doc, ret) => {
     delete ret.password;
     return ret
   }
