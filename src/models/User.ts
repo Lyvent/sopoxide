@@ -8,7 +8,7 @@ import {
   nameRegex
 } from '../helpers/regex';
 
-const roles: string[] = ['user', 'moderator', 'admin'];
+// const roles: string[] = ['user', 'moderator', 'admin'];
 
 const UserSchema = new Schema({
   email: {
