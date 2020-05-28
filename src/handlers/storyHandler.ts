@@ -1,10 +1,19 @@
 import { Request, Response } from 'express';
 import { isValidObjectId } from 'mongoose';
+import { isEmpty } from 'lodash';
 
 import Story from '../models/Story';
 import logger from '../middleware/logger';
-import { serverErrResponse } from '../helpers/response';
+import { badRequestResponse, serverErrResponse } from '../helpers/response';
 
+// Interfaces
+interface CreateData {
+  title: string;
+  content: string,
+  tags?: string[] ,
+}
+
+// Utils
 const storyNotFound = (res: Response) => {
   res.status(404).json({
     message: 'Story not found.',
@@ -21,6 +30,7 @@ const checkStoryID = (res: Response, storyID: string) => {
   }
 }
 
+// Handlers
 // Get a story
 const getStory = async (req: Request, res: Response) => {
   // Get the story's ID.
@@ -45,6 +55,32 @@ const getStory = async (req: Request, res: Response) => {
     logger.log('error', `An error occured while fetching the story -> ${error}`);
     serverErrResponse(res);
   }
+}
+
+const createStory = async (req: Request, res: Response) => {
+  // Grab json body content and check if it exists.
+  const createData: CreateData = req.body;
+  if (isEmpty(createData)) {
+    badRequestResponse(res, 'Create data not found!');
+    return;
+  }
+
+  /* TODO:
+    - Check if the user has the privileges to create a post.
+    - Story validations.
+  */
+
+  // Get current user's id
+
+  // Create a new story
+  const story = new Story({
+    title: createData.title,
+    content: createData.content,
+  });
+
+  res.status(501).json({
+    message: 'This resource hasn\'t been implemented.'
+  });
 }
 
 const updateStory = async (req: Request, res: Response) => {
@@ -99,4 +135,4 @@ const deleteStory = async (req: Request, res: Response) => {
 }
 
 // Export Story CRUD.
-export { getStory, updateStory, deleteStory }; 
+export { createStory, getStory, updateStory, deleteStory }; 
