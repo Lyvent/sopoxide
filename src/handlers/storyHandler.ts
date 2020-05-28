@@ -9,8 +9,8 @@ import { badRequestResponse, serverErrResponse } from '../helpers/response';
 // Interfaces
 interface CreateData {
   title: string;
-  content: string,
-  tags?: string[] ,
+  content: string;
+  tags?: string[];
 }
 
 // Utils
@@ -30,109 +30,107 @@ const checkStoryID = (res: Response, storyID: string) => {
   }
 }
 
-// Handlers
-// Get a story
-const getStory = async (req: Request, res: Response) => {
-  // Get the story's ID.
-  const storyID: string = req.params.storyID;
-  checkStoryID(res, storyID);
+class StoryHandler {
+  get = async (req: Request, res: Response) => {
+    // Get the story's ID
+    const storyID: string = req.params.storyID;
+    checkStoryID(res, storyID);
 
-  try {
-    // Query the DB for the story
-    const story = await Story.findById(storyID);
-    
-    if (!story) {
-      return storyNotFound(res);
+    try {
+      // Query the DB for the story
+      const story = await Story.findById(storyID);
+      if (!story) {
+        return storyNotFound(res);
+      }
+
+      res.status(200).json({
+        message: 'Story data sent.',
+        story: story,
+      });
+      
+    } catch (error) {
+      // Log and respond to the error.
+      logger.log('error', `An error occured while fetching the story -> ${error}`);
+      serverErrResponse(res);
     }
+  } // Get Story
 
-    res.status(200).json({
-      message: 'Story data sent.',
-      story: story
-    });
-
-  } catch (error) {
-    // Log and respond to the error.
-    logger.log('error', `An error occured while fetching the story -> ${error}`);
-    serverErrResponse(res);
-  }
-}
-
-const createStory = async (req: Request, res: Response) => {
-  // Grab json body content and check if it exists.
-  const createData: CreateData = req.body;
-  if (isEmpty(createData)) {
-    badRequestResponse(res, 'Create data not found!');
-    return;
-  }
-
-  /* TODO:
-    - Check if the user has the privileges to create a post.
-    - Story validations.
-  */
-
-  // Get current user's id
-
-  // Create a new story
-  const story = new Story({
-    title: createData.title,
-    content: createData.content,
-  });
-
-  res.status(501).json({
-    message: 'This resource hasn\'t been implemented.'
-  });
-}
-
-const updateStory = async (req: Request, res: Response) => {
-  // Get the story's ID
-  const storyID: string = req.params.storyID;
-  checkStoryID(res, storyID);
-
-  try {
-    // Query the DB for the story
-    const story = await Story.findById(storyID);
-    if (!story) {
-      return storyNotFound(res);
+  create = async (req: Request, res: Response) => {
+    // Grab json body content and check if it exists.
+    const createData: CreateData = req.body;
+    if (isEmpty(createData)) {
+      badRequestResponse(res, 'Create data not found!');
+      return;
     }
 
     /* TODO:
-      - Check if the current user is the story's author.
-      - Update the story based on given req.body values.
+      - Check if the user has the privileges to create a post.
+      - Story validations.
     */
-    
-  } catch (error) {
-    // Log and respond to the error.
-    logger.log('error', `An error occured while fetching the story -> ${error}`);
-    serverErrResponse(res);
-  }
-};
 
-const deleteStory = async (req: Request, res: Response) => {
-  // Get the story's ID
-  const storyID: string = req.params.storyID;
-  checkStoryID(res, storyID);
+    // Get current user's id
 
-  try {
-    // Query the DB for the story
-    const story = await Story.findById(storyID);
-
-    if (!story) {
-      return storyNotFound(res);
-    }
-
-    // TODO: Implement author checking or admin role for deletion.
+    // Create a new story
+    // const story = new Story({
+    //   title: createData.title,
+    //   content: createData.content,
+    // });
 
     res.status(501).json({
-      message: 'This route hasn\'t been implemented yet.',
-      data: req.user
+      message: 'This resource hasn\'t been implemented.'
     });
-    
-  } catch (error) {
-    // Log and respond to the error.
-    logger.log('error', `An error occured while fetching the story -> ${error}`);
-    serverErrResponse(res);
-  }
+  } // Create Story
+
+  update = async (req: Request, res: Response) => {
+    // Get the story's ID
+    const storyID: string = req.params.storyID;
+    checkStoryID(res, storyID);
+
+    try {
+      // Query the DB for the story
+      const story = await Story.findById(storyID);
+      if (!story) {
+        return storyNotFound(res);
+      }
+
+      /* TODO:
+        - Check if the current user is the story's author.
+        - Update the story based on given req.body values.
+      */
+      
+    } catch (error) {
+      // Log and respond to the error.
+      logger.log('error', `An error occured while fetching the story -> ${error}`);
+      serverErrResponse(res);
+    }
+  } // Update Story
+
+  delete = async (req: Request, res: Response) => {
+    // Get the story's ID
+    const storyID: string = req.params.storyID;
+    checkStoryID(res, storyID);
+
+    try {
+      // Query the DB for the story
+      const story = await Story.findById(storyID);
+
+      if (!story) {
+        return storyNotFound(res);
+      }
+
+      // TODO: Implement author checking or admin role for deletion.
+
+      res.status(501).json({
+        message: 'This route hasn\'t been implemented yet.',
+        data: req.user
+      });
+      
+    } catch (error) {
+      // Log and respond to the error.
+      logger.log('error', `An error occured while fetching the story -> ${error}`);
+      serverErrResponse(res);
+    }
+  } // Delete Story
 }
 
-// Export Story CRUD.
-export { createStory, getStory, updateStory, deleteStory }; 
+export default StoryHandler;

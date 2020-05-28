@@ -1,32 +1,28 @@
 import passport from 'passport';
 import { Router } from 'express';
-import {
-  createStory,
-  getStory,
-  updateStory,
-  deleteStory
-} from '../handlers/storyHandler';
+import StoryHandler from '../handlers/storyHandler';
 
 const router = Router();
+const handler = new StoryHandler();
 
-router.get('/:storyID', getStory);
+router.get('/:storyID', handler.get);
 
 router.post(
   '/create',
   passport.authenticate('jwt', { session: false }),
-  createStory
+  handler.create
 );
 
 router.put(
   '/update',
   passport.authenticate('jwt', { session: false }),
-  updateStory
+  handler.update
 );
 
 router.delete(
   '/:storyID',
   passport.authenticate('jwt', { session: false }),
-  deleteStory
+  handler.update
 );
 
 export { router as storyRoutes }; 
