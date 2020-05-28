@@ -27,8 +27,8 @@ const getStory = async (req: Request, res: Response) => {
   const storyID: string = req.params.storyID;
   checkStoryID(res, storyID);
 
-  // Query the DB for the story
   try {
+    // Query the DB for the story
     const story = await Story.findById(storyID);
     
     if (!story) {
@@ -41,37 +41,62 @@ const getStory = async (req: Request, res: Response) => {
     });
 
   } catch (error) {
+    // Log and respond to the error.
     logger.log('error', `An error occured while fetching the story -> ${error}`);
-
     serverErrResponse(res);
   }
 }
+
+const updateStory = async (req: Request, res: Response) => {
+  // Get the story's ID
+  const storyID: string = req.params.storyID;
+  checkStoryID(res, storyID);
+
+  try {
+    // Query the DB for the story
+    const story = await Story.findById(storyID);
+    if (!story) {
+      return storyNotFound(res);
+    }
+
+    /* TODO:
+      - Check if the current user is the story's author.
+      - Update the story based on given req.body values.
+    */
+    
+  } catch (error) {
+    // Log and respond to the error.
+    logger.log('error', `An error occured while fetching the story -> ${error}`);
+    serverErrResponse(res);
+  }
+};
 
 const deleteStory = async (req: Request, res: Response) => {
   // Get the story's ID
   const storyID: string = req.params.storyID;
   checkStoryID(res, storyID);
 
-  // Query the DB for the story
   try {
+    // Query the DB for the story
     const story = await Story.findById(storyID);
 
     if (!story) {
       return storyNotFound(res);
     }
 
-    // Check if the current user is the author or an admin.
-
     // TODO: Implement author checking or admin role for deletion.
+
     res.status(501).json({
       message: 'This route hasn\'t been implemented yet.',
       data: req.user
     });
     
   } catch (error) {
+    // Log and respond to the error.
     logger.log('error', `An error occured while fetching the story -> ${error}`);
-
     serverErrResponse(res);
   }
 }
-export { getStory, deleteStory }; 
+
+// Export Story CRUD.
+export { getStory, updateStory, deleteStory }; 
