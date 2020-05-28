@@ -1,9 +1,10 @@
 import { Router } from 'express';
-import { logIn, signUp } from '../handlers/authHandler';
+import AuthHandler from '../handlers/authHandler';
 
 const router = Router();
+const handler = new AuthHandler();
 
-router.post('/login', logIn);
-router.post('/signup', signUp);
+router.post('/login', handler.logIn);
+router.post('/signup', handler.signUp);
 
 export { router as authRoutes };
