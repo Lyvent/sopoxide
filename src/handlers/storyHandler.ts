@@ -53,7 +53,7 @@ class StoryHandler {
       logger.log('error', `An error occured while fetching the story -> ${error}`);
       serverErrResponse(res);
     }
-  } // Get Story
+  }; // Get Story
 
   create = async (req: Request, res: Response) => {
     // Grab json body content and check if it exists.
@@ -79,7 +79,7 @@ class StoryHandler {
     res.status(501).json({
       message: 'This resource hasn\'t been implemented.'
     });
-  } // Create Story
+  }; // Create Story
 
   update = async (req: Request, res: Response) => {
     // Get the story's ID
@@ -103,7 +103,7 @@ class StoryHandler {
       logger.log('error', `An error occured while fetching the story -> ${error}`);
       serverErrResponse(res);
     }
-  } // Update Story
+  }; // Update Story
 
   delete = async (req: Request, res: Response) => {
     // Get the story's ID
@@ -130,7 +130,7 @@ class StoryHandler {
       logger.log('error', `An error occured while fetching the story -> ${error}`);
       serverErrResponse(res);
     }
-  } // Delete Story
+  }; // Delete Story
 }
 
 export default StoryHandler;
