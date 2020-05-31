@@ -9,8 +9,29 @@ import {
   VerifyCallback
 } from 'passport-jwt';
 
+import { OAuth2Client, TokenPayload } from 'google-auth-library';
+
 import User, { UserDoc } from '../models/User';
 
+// Google Verify
+const CLIENT_ID = process.env.GOOGLE_CLIENT_ID || '';
+const client = new OAuth2Client(CLIENT_ID);
+const verifyGoogleIDToken = async (token: string) => {
+  try {
+    const ticket = await client.verifyIdToken({
+      idToken: token,
+      audience: CLIENT_ID,
+    });   
+
+    const payload = ticket.getPayload();
+    return payload;
+
+  } catch (err) {
+    throw new Error(err);
+  }
+}
+
+// Local JWT
 const options: StrategyOptions = {
   jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),
   secretOrKey: process.env.JWT_SECRET,
@@ -55,4 +76,4 @@ const issueJWT = (user: UserDoc): JWTData => {
 }
 
 export default passport.use(strategy);
-export { issueJWT, JWTData };
+export { issueJWT, JWTData, verifyGoogleIDToken };
