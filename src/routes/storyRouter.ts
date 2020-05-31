@@ -5,7 +5,10 @@ import StoryHandler from '../handlers/storyHandler';
 const router = Router();
 const handler = new StoryHandler();
 
-router.get('/:storyID', handler.get);
+router.get(
+  '/:storyID',
+  handler.get
+);
 
 router.post(
   '/create',
