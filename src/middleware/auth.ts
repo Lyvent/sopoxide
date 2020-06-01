@@ -14,9 +14,17 @@ import { OAuth2Client, TokenPayload } from 'google-auth-library';
 import User, { UserDoc } from '../models/User';
 
 // Google Verify
+class VerificationError extends Error {
+  constructor(message: string) {
+    super(message);
+    this.name = 'VerificationError';
+  }
+}
+
 const CLIENT_ID = process.env.GOOGLE_CLIENT_ID || '';
 const client = new OAuth2Client(CLIENT_ID);
-const verifyGoogleIDToken = async (token: string) => {
+
+const verifyGoogleIDToken = async (token: string): Promise<TokenPayload | undefined> => {
   try {
     const ticket = await client.verifyIdToken({
       idToken: token,
@@ -27,7 +35,7 @@ const verifyGoogleIDToken = async (token: string) => {
     return payload;
 
   } catch (err) {
-    throw new Error(err);
+    throw new VerificationError(err);
   }
 }
 
@@ -76,4 +84,4 @@ const issueJWT = (user: UserDoc): JWTData => {
 }
 
 export default passport.use(strategy);
-export { issueJWT, JWTData, verifyGoogleIDToken };
+export { issueJWT, JWTData, verifyGoogleIDToken, VerificationError };
