@@ -55,6 +55,15 @@ const UserSchema = new Schema({
     default: Date.now
   },
 
+  provider: {
+    type: String,
+    required: true,
+    default: 'local',
+    enum: ['local', 'google']
+  },
+
+  // Used by external providers to identify the user.
+  providerSub: String,
 
   // Social Handles - Supported.
   socialMediaHandles: {
@@ -92,6 +101,9 @@ UserSchema.set('toJSON', {
   getters: true,
   transform: (_doc, ret) => {
     delete ret.password;
+    delete ret.provider;
+    delete ret.providerSub;
+
     return ret
   }
 });
