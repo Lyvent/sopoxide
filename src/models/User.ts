@@ -103,8 +103,9 @@ UserSchema.set('toJSON', {
     delete ret.password;
     delete ret.provider;
     delete ret.providerSub;
+    delete ret.id;
 
-    return ret
+    return ret;
   }
 });
 
