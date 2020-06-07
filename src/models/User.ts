@@ -8,6 +8,7 @@ import {
   nameRegex
 } from '../helpers/regex';
 
+// TODO: Implement Roles for RBAC
 // const roles: string[] = ['user', 'moderator', 'admin'];
 
 const UserSchema = new Schema({

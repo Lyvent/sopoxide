@@ -65,6 +65,7 @@ class StoryHandler {
     }
 
     /* TODO:
+      - Make sure that RBAC has been implemented.
       - Check if the user has the privileges to create a post.
       - Story validations.
     */
