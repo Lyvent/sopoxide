@@ -1,6 +1,6 @@
 import { Request, Response } from 'express';
 import { isValidObjectId } from 'mongoose';
-import { isEmpty } from 'lodash';
+import { isEmpty, mapValues } from 'lodash';
 
 import Story from '../models/Story';
 import logger from '../middleware/logger';
@@ -10,6 +10,7 @@ import { badRequestResponse, serverErrResponse } from '../helpers/response';
 interface CreateData {
   title: string;
   content: string;
+  category: string;
   tags?: string[];
 }
 
@@ -68,17 +69,49 @@ class StoryHandler {
       - Story validations.
     */
 
-    // Get current user's id
+    // Get current user data
+    const currentUser: any = req.user;
 
     // Create a new story
-    // const story = new Story({
-    //   title: createData.title,
-    //   content: createData.content,
-    // });
-
-    res.status(501).json({
-      message: 'This resource hasn\'t been implemented.'
+    const story = new Story({
+      title: createData.title,
+      content: createData.content,
+      author: currentUser._id,
+      category: createData.category,
+      tags: createData?.tags,
     });
+
+    // Perform model validations
+    const validationErr = story.validateSync();
+    if (validationErr) {
+      const fieldErrors = mapValues(validationErr.errors, 'message');
+
+      // Validation error response.
+      return res.status(400).json({
+        message: 'Story creation failed.',
+        errors: fieldErrors,
+      });
+    }
+
+    // Try to save the story and send the data back to client.
+    try {
+      let newStory = await story.save();
+
+      // Populate new story with author and assign it newStory.
+      newStory = await Story.populate(newStory, { path: 'author' });
+
+      logger.log('info', `${currentUser.username} created a new story.`);
+
+      res.status(201).json({
+        message: 'Created a new story.',
+        story: newStory,
+      });
+
+    } catch (error) {
+      // Log and respond to the error.
+      logger.log('error', `An error occured while fetching the story -> ${error}`);
+      serverErrResponse(res); 
+    }
   }; // Create Story
 
   update = async (req: Request, res: Response) => {
