@@ -3,13 +3,13 @@ import { Schema, model } from 'mongoose';
 const StorySchema = new Schema({
   title: {
     type: String,
-    maxlength: 100,
-    required: true,
+    maxlength: 50,
+    required: [true, 'Story needs to have a title.'],
   },
 
   content: {
     type: String,
-    required: true
+    required: [true, 'Content not found! boring...'],
   },
 
   // Author Reference.
@@ -26,6 +26,14 @@ const StorySchema = new Schema({
   }],
 
   tags: [String],
+
+  category: {
+    type: String,
+    enum: [
+      // TODO: Add category enums.
+    ],
+    required: [true, 'Category is a required value.'],
+  }
 
 }, {
   // Assign timestamps to track changes.
