@@ -17,7 +17,7 @@ router.post(
 );
 
 router.put(
-  '/update',
+  '/update/:storyID',
   passport.authenticate('jwt', { session: false }),
   handler.update
 );
