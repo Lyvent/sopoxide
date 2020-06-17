@@ -22,7 +22,7 @@ describe('Auth router unit test.', () => {
   });
 
   describe('/login ROUTE', () => {
-    it('It should POST login data and receive a JWT token', done => {
+    it('Should POST login data and receive a JWT token', done => {
       // @TODO: Implement login unit test.
       done();
     });
@@ -30,7 +30,7 @@ describe('Auth router unit test.', () => {
 
   // Test signup route
   describe('/signup ROUTE', () => {
-    it('It should POST registration data and register user.', done => {
+    it('Should POST registration data and register user.', done => {
       const signUpData = {
         email: 'test@user.com',
         password: 'test1234',
