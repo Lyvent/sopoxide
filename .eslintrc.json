@@ -23,6 +23,7 @@
     "plugins": [
         "@typescript-eslint"
     ],
+    "ignorePatterns": ["tests/**/*.ts"],
     "rules": {
         "quotes": ["error", "single"],
         "node/no-missing-import": ["error", {
@@ -30,6 +31,7 @@
         }],
         "node/no-unsupported-features/es-syntax": ["error", { "ignores": ["modules"] }],
         "@typescript-eslint/ban-ts-ignore": "off",
+        "@typescript-eslint/no-explicit-any": "off",
         "@typescript-eslint/explicit-function-return-type": "off",
         "no-empty": "off"
     }
