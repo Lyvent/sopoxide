@@ -1,8 +1,7 @@
-// @ts-nocheck
 process.env.NODE_ENV = 'test';
 
 // Require dev-deps
-import chai, { should } from 'chai';
+import chai from 'chai';
 import chaiHttp from 'chai-http';
 import app from '../src/app';
 
@@ -25,6 +24,7 @@ describe('Auth router unit test.', () => {
   describe('/login ROUTE', () => {
     it('It should POST login data and receive a JWT token', done => {
       // @TODO: Implement login unit test.
+      done();
     });
   }); // Login
 
