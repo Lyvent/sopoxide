@@ -1,4 +1,5 @@
 import { Schema, model } from 'mongoose';
+import mongoosePaginate from 'mongoose-paginate-v2';
 
 const StorySchema = new Schema({
   title: {
@@ -40,8 +41,12 @@ const StorySchema = new Schema({
   timestamps: true
 });
 
+// Plugins
+StorySchema.plugin(mongoosePaginate);
+
 // Model
 const Story = model('Story', StorySchema);
+
 
 export default Story;
 export { StorySchema };
