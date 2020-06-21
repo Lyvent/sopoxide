@@ -6,4 +6,4 @@ const handler = new FeedHandler();
 
 router.get('/stories', handler.stories);
 
-export { router as Router };
+export { router as feedRoutes };
