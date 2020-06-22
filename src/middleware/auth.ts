@@ -42,7 +42,7 @@ const verifyGoogleIDToken = async (token: string): Promise<TokenPayload | undefi
 // Local JWT
 const options: StrategyOptions = {
   jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),
-  secretOrKey: process.env.JWT_SECRET,
+  secretOrKey: process.env.JWT_SECRET || 'ch4ng31nPr0D',
 }
 
 const verify: VerifyCallback = async (payload, done) => {
@@ -65,7 +65,7 @@ const issueJWT = (user: UserDoc): JWTData => {
   const expiresIn = '1d';
 
   // IMPORTANT: Set JWT_SECRET in dotenv!
-  const secret: string = process.env.JWT_SECRET || 'ch4ngeInPr0d';
+  const secret: string = process.env.JWT_SECRET || 'ch4ng31nPr0d';
 
   // Create JWT Payload.
   const payload = {
