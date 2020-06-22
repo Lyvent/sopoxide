@@ -9,7 +9,7 @@ class FeedHandler {
   stories = async (req: Request, res: Response) => {
 
     const options: PaginateOptions = {
-      page: parseInt((req.query as any).page),
+      page: Number(req.query.page),
       populate: 'author',
       limit: 15, // Limit to 15 stories per feed.
       sort: {
