@@ -42,7 +42,6 @@ class FeedHandler {
       logger.log('error', `An error occured while fetching paginated posts -> ${error}`);
       serverErrResponse(res);
     }
-
   } // Get stories
 }
 
