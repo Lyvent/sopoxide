@@ -1,8 +1,8 @@
 import chai, { expect } from 'chai';
 import sinon from 'sinon';
 
-// Import user model
 import User from '../src/models/User';
+import { assert } from 'console';
 
 // Get all users.
 describe('Get all users', () => {
@@ -18,6 +18,7 @@ describe('Get all users', () => {
     User.find((_, res) => {
       UserMock.verify();
       UserMock.restore();
+
       expect((res as any).status).to.be.true;
       done();
     });
@@ -174,15 +175,70 @@ describe('Delete a user by id', () => {
 });
 
 describe('Checking user password', () => {
-  it('should check user password is right', done => {
+  it('should pass if user password is right', done => {
     const user = new User({
       password: 'test1234'
     });
 
     const UserMock = sinon.mock(user);
-    const expectedResult = true;
 
-    UserMock.expects('isValidPassword').withArgs('test1234').resolves(expectedResult);
+    UserMock.expects('isValidPassword').withArgs('test69420').returns(true);
+    const isValid = user.isValidPassword('test69420');
+
+    expect(isValid).to.be.true;
+
+    UserMock.verify();
+    UserMock.restore();
+
+    done();
+  });
+
+  it('should pass if user password is wrong', done => {
+    const user = new User({
+      password: 'test1234'
+    });
+
+    const UserMock = sinon.mock(user);
+
+    UserMock.expects('isValidPassword').withArgs('test69420').returns(false);
+    const isValid = user.isValidPassword('test69420');
+
+    expect(isValid).to.be.false;
+
+    UserMock.verify();
+    UserMock.restore();
+
+    done();
+  });
+});
+
+describe('Create user validation', () => {
+  it('should pass if it validates properly', done => {
+    const user = new User({
+      email: 'mock@user.com',
+      fullName: 'Mock User',
+      username: 'mock.user',
+      password: 'mock1234'
+    });
+
+    const error = user.validateSync();
+
+    expect(error).to.be.undefined;
+
+    done();
+  });
+
+  it('should fail if it has validation errors', done => {
+    const user = new User({
+      fullName: 'Mock User',
+      password: 'mock1234'
+    });
+
+    const error = user.validateSync();
+
+    expect(error?.errors['email'].message).to.be.equal('Email is a required value.');
+    expect(error?.errors['username'].message).to.be.equal('Username is a required value.');
+
     done();
   });
 });
