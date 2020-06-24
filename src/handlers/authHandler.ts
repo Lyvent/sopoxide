@@ -33,8 +33,7 @@ class AuthHandler {
     // Grab json body content and check if it exists.
     const tokenData: TokenData = req.body;
     if (isEmpty(tokenData)) {
-      badRequestResponse(res, 'Token data not found!');
-      return;
+      return badRequestResponse(res, 'Token data not found!');
     }
 
     try {
@@ -87,8 +86,7 @@ class AuthHandler {
     // Grab json body content and check if it exists.
     const loginData: LoginData = req.body;
     if (isEmpty(loginData)) {
-      badRequestResponse(res, 'Login data not found!');
-      return;
+      return badRequestResponse(res, 'Login data not found!');
     }
 
     try {
