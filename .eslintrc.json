@@ -23,7 +23,7 @@
     "plugins": [
         "@typescript-eslint"
     ],
-    "ignorePatterns": ["tests/**/*.ts"],
+    "ignorePatterns": ["tests/**/*.test.ts"],
     "rules": {
         "quotes": ["error", "single"],
         "node/no-missing-import": ["error", {
