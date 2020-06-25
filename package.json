@@ -8,7 +8,7 @@
     "prod": "tsc && node ./dist/app.js",
     "build": "tsc -p .",
     "test": "ava --verbose",
-    "coverage": "nyc --reporter=lcov --reporter=text-summary ava",
+    "coverage": "nyc --reporter=json ava",
     "lint": "eslint --ignore-path .gitignore ."
   },
   "keywords": [],
