@@ -2,3 +2,7 @@ node_modules
 dist
 .env
 yarn-error.log
+
+# Ignore code coverage outputs.
+.nyc_output
+coverage
