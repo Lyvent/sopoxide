@@ -80,6 +80,7 @@ const UserSchema = new Schema({
 });
 
 // Hooks/Middleware
+/* istanbul ignore next */
 UserSchema.pre('save', async function(next) {
   // INFO: This hashes the password before saving the document into the DB.
   // @ts-ignore
@@ -92,12 +93,14 @@ UserSchema.pre('save', async function(next) {
 });
 
 // Methods and Plugins
+/* istanbul ignore next */
 UserSchema.methods.isValidPassword = async function(password: string): Promise<boolean> {
   // INFO: Compares hashed password and user password to see if it matches.
   const matches: boolean = await bcrypt.compare(password, this.password);
   return matches;
 }
 
+/* istanbul ignore next */
 UserSchema.set('toJSON', {
   getters: true,
   transform: (_doc, ret) => {
