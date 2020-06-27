@@ -47,6 +47,5 @@ StorySchema.plugin(mongoosePaginate);
 // Model
 const Story = model('Story', StorySchema);
 
-
 export default Story;
 export { StorySchema };
