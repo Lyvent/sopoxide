@@ -13,7 +13,6 @@ import { OAuth2Client, TokenPayload } from 'google-auth-library';
 
 import User, { UserDoc } from '../models/User';
 
-// Google Verify
 class VerificationError extends Error {
   constructor(message: string) {
     super(message);
@@ -24,6 +23,7 @@ class VerificationError extends Error {
 const CLIENT_ID = process.env.GOOGLE_CLIENT_ID || '';
 const client = new OAuth2Client(CLIENT_ID);
 
+/* istanbul ignore next */
 const verifyGoogleIDToken = async (token: string): Promise<TokenPayload | undefined> => {
   try {
     const ticket = await client.verifyIdToken({
@@ -45,6 +45,8 @@ const options: StrategyOptions = {
   secretOrKey: process.env.JWT_SECRET || 'ch4ng31nPr0D',
 }
 
+/* istanbul ignore next */
+// Ignore this because it's part of Passport.
 const verify: VerifyCallback = async (payload, done) => {
   await User.findOne({ _id: payload.sub }, (err, res) => {
     res ? done(null, res) : done(err, null); 
