@@ -1,6 +1,6 @@
 import { Request, Response } from 'express';
-import { issueJWT, JWTData, verifyGoogleIDToken, VerificationError } from '../middleware/auth';
-import { isEmpty, mapValues, isUndefined } from 'lodash';
+import { issueJWT, JWTData } from '../middleware/auth';
+import { isEmpty, mapValues } from 'lodash';
 import logger from '../middleware/logger';
 import User from '../models/User';
 
@@ -29,64 +29,64 @@ interface SignUpData {
 }
 
 class AuthHandler {
-  google = async (req: Request, res: Response) => {
-    // Grab json body content and check if it exists.
-    const tokenData: TokenData = req.body;
-    if (isEmpty(tokenData)) {
-      return badRequestResponse(res, 'Token data not found!');
-    }
+  // google = async (req: Request, res: Response) => {
+  //   // Grab json body content and check if it exists.
+  //   const tokenData: TokenData = req.body;
+  //   if (isEmpty(tokenData)) {
+  //     return badRequestResponse(res, 'Token data not found!');
+  //   }
 
-    try {
-      // Validate the token and get the payload.
-      const payload = await verifyGoogleIDToken(tokenData.token);
-      if (isUndefined(payload)) {
-        return res.status(401).json({
-          message: 'Token is not valid!',
-          error: 'token_invalid',
-        });
-      }
+  //   try {
+  //     // Validate the token and get the payload.
+  //     const payload = await verifyGoogleIDToken(tokenData.token);
+  //     if (isUndefined(payload)) {
+  //       return res.status(401).json({
+  //         message: 'Token is not valid!',
+  //         error: 'token_invalid',
+  //       });
+  //     }
 
-      const user = await User.findOne({ provider: 'google', providerSub: payload.sub });
+  //     const user = await User.findOne({ provider: 'google', providerSub: payload.sub });
 
-      if (!user) {
-        return res.status(404).json({
-          message: 'This account has not been registered yet',
-          error: 'user_unregistered',
-        });
-      }
+  //     if (!user) {
+  //       return res.status(404).json({
+  //         message: 'This account has not been registered yet',
+  //         error: 'user_unregistered',
+  //       });
+  //     }
 
-      // Issue a token
-      const jwt = issueJWT(user);
+  //     // Issue a token
+  //     const jwt = issueJWT(user);
 
-      const loginResponse: AuthResponse = {
-        message: 'Logged in successfully',
-        user: user.toJSON(),
-        jwt: jwt,
-      }
+  //     const loginResponse: AuthResponse = {
+  //       message: 'Logged in successfully',
+  //       user: user.toJSON(),
+  //       jwt: jwt,
+  //     }
 
-      res.status(200).json(loginResponse);
+  //     res.status(200).json(loginResponse);
       
-    } catch (error) {
-      // Check if it is a verification error
-      if (error instanceof VerificationError) {
-        return res.status(401).json({
-          message: 'Token is not valid!',
-          error: 'token_invalid',
-        });
-      }
+  //   } catch (error) {
+  //     // Check if it is a verification error
+  //     if (error instanceof VerificationError) {
+  //       return res.status(401).json({
+  //         message: 'Token is not valid!',
+  //         error: 'token_invalid',
+  //       });
+  //     }
 
-      logger.log('error', `An error occured while logging in -> ${error}`);
+  //     logger.log('error', `An error occured while logging in -> ${error}`);
       
-      serverErrResponse(res);
-    }
+  //     serverErrResponse(res);
+  //   }
 
-  }; // Google Auth method
+  // }; // Google Auth method
 
   logIn = async (req: Request, res: Response) => {
     // Grab json body content and check if it exists.
     const loginData: LoginData = req.body;
-    if (isEmpty(loginData)) {
-      return badRequestResponse(res, 'Login data not found!');
+    if (isEmpty(loginData) || !loginData.email || !loginData.password) {
+      return badRequestResponse(res, 'Login credentials is incomplete!');
     }
 
     try {
@@ -132,8 +132,7 @@ class AuthHandler {
     // Grab json body content and check if it exists.
     const signUpData: SignUpData = req.body;
     if (isEmpty(signUpData)) {
-      badRequestResponse(res, 'Sign up data not found!');
-      return;
+      return badRequestResponse(res, 'Sign up data is incomplete!');
     }
 
   // Create a new user
