@@ -4,7 +4,7 @@ import { Response } from 'express';
 const badRequestResponse = (res: Response, message: string) => {
   res.status(400).json({
       message: message,
-      error: 'data_404'
+      error: 'data_incomplete'
   })
 }
 
