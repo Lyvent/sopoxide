@@ -4,7 +4,7 @@ const logger = createLogger({
   transports: [
     new transports.File({
       level: 'info',
-      filename: '../../logs/app.log',
+      filename: './logs/app.log',
       handleExceptions: true,
       maxFiles: 5,
       maxsize: 5242880, // 5MB
