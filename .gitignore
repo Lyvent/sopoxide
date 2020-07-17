@@ -6,3 +6,5 @@ yarn-error.log
 # Ignore code coverage outputs.
 .nyc_output
 coverage
+
+logs
