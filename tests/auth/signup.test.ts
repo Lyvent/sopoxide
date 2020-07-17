@@ -5,7 +5,6 @@ import { mockRequest, mockResponse } from 'mock-req-res';
 
 import AuthHandler from '../../src/handlers/authHandler';
 import User from '../../src/models/User';
-import { issueJWT } from '../../src/middleware/auth';
 
 const handler = new AuthHandler();
 
@@ -18,7 +17,7 @@ const fakeUserData = {
   password: internet.password(),
 };
 
-test('should have a 400 error code response', t => {
+test('should have a 400 error code response', async t => {
   const incompleteData = {
     email: fakeUserData.email,
     fullName: fakeUserData.fullName
@@ -31,15 +30,16 @@ test('should have a 400 error code response', t => {
 
   const res = mockResponse();
 
-  return handler.signUp(req, res).then(() => {
-    t.true(res.status.calledWith(400));
-    t.true(res.json.calledWithMatch({
-      message: 'Registration failed.',
-    }));
-  });
+  // Wait for Sign up to resolve.
+  await handler.signUp(req, res);
+
+  t.true(res.status.calledWith(400));
+  t.true(res.json.calledWithMatch({
+    message: 'Registration failed.',
+  }));
 });
 
-test('should have a 201 response after creating user.', t => {
+test('should have a 201 response after creating user.', async t => {
   const fakeUserLikeMyFriends = new User(fakeUserData);
   const req = mockRequest({
     body: fakeUserData
@@ -48,12 +48,15 @@ test('should have a 201 response after creating user.', t => {
 
   const UserMock = sinon.mock(fakeUserLikeMyFriends);
 
+  // Use proxyquire to override issueJWT method.
+
+  UserMock.expects('validateSync').returns(undefined);
   UserMock.expects('save').returns(fakeUserLikeMyFriends);
 
-  return handler.signUp(req, res).then(() => {
-    UserMock.verify();
-    UserMock.restore();
+  await handler.signUp(req, res);
 
-    t.true(res.status.calledWith(201));
-  });
+  UserMock.verify();
+  UserMock.restore();
+
+  t.true(res.status.calledWith(201));
 });
