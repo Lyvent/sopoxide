@@ -10,7 +10,6 @@ import morgan from 'morgan';
 import logger from './middleware/logger';
 
 import cors from 'cors';
-import corsOptions from './middleware/corsOptions';
 
 import passport from './middleware/auth';
 // 
@@ -20,9 +19,10 @@ const app: Application = express();
 // Instantiate middlewares
 app.use(express.json());
 app.use(helmet());
-app.use(cors(corsOptions));
+app.use(cors({
+  optionsSuccessStatus: 200
+}));
 app.use(morgan('combined'));
-
 app.use(passport.initialize());
 
 // Create DB connection.
