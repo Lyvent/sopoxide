@@ -56,6 +56,12 @@ const UserSchema = new Schema({
     default: Date.now
   },
 
+  // @TODO: Implement user confirmation.
+  confirmed: {
+    type: Boolean,
+    default: false
+  },
+
   provider: {
     type: String,
     required: true,
