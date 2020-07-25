@@ -7,10 +7,9 @@ import { routeIndex } from './routes/index';
 // Middleware & Utilities
 import helmet from 'helmet';
 import morgan from 'morgan';
-import logger from './middleware/logger';
-
 import cors from 'cors';
 
+import logger from './middleware/logger';
 import passport from './middleware/auth';
 // 
 

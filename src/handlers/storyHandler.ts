@@ -67,10 +67,9 @@ class StoryHandler {
     /* TODO:
       - Make sure that RBAC has been implemented.
       - Check if the user has the privileges to create a post.
-      - Story validations.
     */
 
-    // Get current user data
+    // Get current user data passed into context by JWT.
     const currentUser: any = req.user;
 
     // Create a new story
