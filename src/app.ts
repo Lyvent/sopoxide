@@ -11,6 +11,7 @@ import cors from 'cors';
 
 import logger from './middleware/logger';
 import passport from './middleware/auth';
+import { apiLimiter } from './middleware/rateLimiting';
 // 
 
 const app: Application = express();
@@ -23,6 +24,7 @@ app.use(cors({
 }));
 app.use(morgan('combined'));
 app.use(passport.initialize());
+app.use(apiLimiter);
 
 // Create DB connection.
 connectDB();
