@@ -47,5 +47,8 @@ StorySchema.plugin(mongoosePaginate);
 // Model
 const Story = model('Story', StorySchema);
 
+// Allowed changes
+const allowedChanges: string[] = ['title', 'content', 'category'];
+
 export default Story;
-export { StorySchema };
+export { StorySchema, allowedChanges };
