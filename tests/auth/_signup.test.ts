@@ -35,7 +35,7 @@ test('should have a 400 error code response', async t => {
 
   t.true(res.status.calledWith(400));
   t.true(res.json.calledWithMatch({
-    message: 'Registration failed.',
+    message: 'Registration failed.'
   }));
 });
 
