@@ -38,6 +38,12 @@ class UserHandler {
       serverErrResponse(res);
     }
   }; // Get specific user
+
+  /* @TODO
+    - Add user deletion.
+    - Add user following.
+    - Add user updating.
+  */
 }
 
 export default UserHandler;
