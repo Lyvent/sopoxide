@@ -10,12 +10,18 @@ const handler = new AuthHandler();
 
 const internet = faker.internet;
 
+// Create a Mongo User for mocking.
 const fakeUserData = {
   email: internet.email(),
   fullName: faker.name.findName(),
   username: internet.userName(),
   password: internet.password(),
 };
+
+const fakeUser = new User(fakeUserData);
+
+// Setup mocks
+const FakeUserMock = sinon.mock(fakeUser);
 
 test('should have a 400 error code response', async t => {
   const incompleteData = {
@@ -40,23 +46,20 @@ test('should have a 400 error code response', async t => {
 });
 
 test('should have a 201 response after creating user.', async t => {
-  const fakeUserLikeMyFriends = new User(fakeUserData);
   const req = mockRequest({
     body: fakeUserData
   });
   const res = mockResponse();
 
-  const UserMock = sinon.mock(fakeUserLikeMyFriends);
-
   // Use proxyquire to override issueJWT method.
 
-  UserMock.expects('validateSync').returns(undefined);
-  UserMock.expects('save').returns(fakeUserLikeMyFriends);
+  FakeUserMock.expects('validateSync').returns(undefined);
+  FakeUserMock.expects('save').returns(fakeUser);
 
   await handler.signUp(req, res);
 
-  UserMock.verify();
-  UserMock.restore();
+  FakeUserMock.verify();
+  FakeUserMock.restore();
 
   t.true(res.status.calledWith(201));
 });

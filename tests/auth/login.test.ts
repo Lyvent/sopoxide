@@ -16,6 +16,18 @@ const fakeUserData = {
   password: internet.password(),
 }
 
+// Create mocks.
+const UserMock = sinon.mock(User);
+
+const fakeUser = new User({
+  email: fakeUserData.email,
+  password: fakeUserData.password,
+  fullName: faker.name.findName(),
+  username: fakeUserData.username,
+});
+
+const FakeUserMock = sinon.mock(fakeUser);
+
 test('should pass if it returns a bad response', t => {
   const req = mockRequest({
     body: {
@@ -43,8 +55,6 @@ test('should pass if it doesn\'t find the user with the email', async t => {
   const req = mockRequest({ body: fakeBody });
   const res = mockResponse();
 
-  const UserMock = sinon.mock(User);
-
   UserMock.expects('findOne')
           .withArgs({ email: fakeBody.email })
           .returns(null);
@@ -69,16 +79,6 @@ test('should pass if it fails to validate user password', async t => {
   const req = mockRequest({ body: fakeBody });
   const res = mockResponse();
 
-  const fakeUser = new User({
-    email: fakeUserData.email,
-    password: fakeUserData.password,
-    fullName: faker.name.findName(),
-    username: fakeUserData.username,
-  });
-
-  const UserMock = sinon.mock(User);
-  const FakeUserMock = sinon.mock(fakeUser);
-
   UserMock.expects('findOne')
           .withArgs({ email: fakeBody.email })
           .returns(fakeUser);
@@ -96,7 +96,7 @@ test('should pass if it fails to validate user password', async t => {
   FakeUserMock.verify();
   FakeUserMock.restore();
 
-  t.true(res.status.calledWith(404));
+  t.true(res.status.calledWith(403));
   t.true(res.json.calledWithMatch({
     message: 'Incorrect password, check login credentials.',
     error: 'password_incorrect'
