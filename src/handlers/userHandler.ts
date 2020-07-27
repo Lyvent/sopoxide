@@ -34,7 +34,6 @@ class UserHandler {
 
     } catch (error) {
       logger.log('error', `An error occured while getting '${username}' data -> ${error}`)      
-
       serverErrResponse(res);
     }
   }; // Get specific user
