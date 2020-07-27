@@ -22,7 +22,7 @@ const fakeStoryData = {
   category: lorem.word(),
 }
 
-// Setup Mocks
+// Setup Mocks.
 const StoryDoc: MockStoryDoc = new Story(fakeStoryData);
 
 const StoryMock = sinon.mock(Story);

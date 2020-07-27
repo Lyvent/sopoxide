@@ -10,7 +10,7 @@ interface MockUserDoc extends UserDoc {
   user?: object;
 }
 
-// Setup Mocks
+// Setup faker data.
 const internet = faker.internet;
 const fullName: string = faker.name.firstName() + faker.name.lastName();
 
@@ -21,7 +21,7 @@ const fakeUserData = {
   password: internet.password(),
 }
 
-// Setup Mocks
+// Setup Mocks.
 const UserDoc: MockUserDoc = new User(fakeUserData);
 
 const UserMock = sinon.mock(User);
