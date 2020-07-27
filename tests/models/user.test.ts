@@ -16,7 +16,7 @@ const fullName: string = faker.name.firstName() + faker.name.lastName();
 
 const fakeUserData = {
   email: internet.email(),
-  username: internet.userName(),
+  username: 'fake.user',
   fullName,
   password: internet.password(),
 }

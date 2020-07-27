@@ -14,7 +14,7 @@ const internet = faker.internet;
 const fakeUserData = {
   email: internet.email(),
   fullName: faker.name.findName(),
-  username: internet.userName(),
+  username: 'fake.user',
   password: internet.password(),
 };
 

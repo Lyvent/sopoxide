@@ -12,7 +12,7 @@ const internet = faker.internet;
 
 const fakeUserData = {
   email: internet.email(),
-  username: internet.userName(),
+  username: 'fake.user',
   password: internet.password(),
 }
 
