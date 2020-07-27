@@ -1,129 +1,126 @@
 import test from 'ava';
 import sinon from 'sinon';
+import faker from 'faker';
 
 import User, { UserDoc } from '../../src/models/User';
 
+// Create Mock interface(s).
 interface MockUserDoc extends UserDoc {
   status?: boolean;
   user?: object;
 }
 
+// Setup Mocks
+const internet = faker.internet;
+const fullName: string = faker.name.firstName() + faker.name.lastName();
+
+const fakeUserData = {
+  email: internet.email(),
+  username: internet.userName(),
+  fullName,
+  password: internet.password(),
+}
+
+// Setup Mocks
+const UserDoc: MockUserDoc = new User(fakeUserData);
+
+const UserMock = sinon.mock(User);
+const UserDocMock = sinon.mock(UserDoc);
+
+test.afterEach('Verify and Restore mock.', () => {
+  UserMock.verify();
+  UserMock.restore();
+});
+
 // Begin unit tests.
 // Multiple user method tests.
-test('should return all users', t => {
-  const UserMock = sinon.mock(User);
+test('should return all users', async t => {
   const expectedResult = {
     status: true,
     users: []
-  }
+  };
 
   UserMock.expects('find').yields(null, expectedResult);
-  User.find((_, res: MockUserDoc) => {
-    UserMock.verify();
-    UserMock.restore();
-
+  await User.find((_, res: MockUserDoc) => {
     t.true(res.status);
   });
 });
 
-test('should return error if no users are found', t => {
-  const UserMock = sinon.mock(User);
+test('should return error if no users are found', async t => {
   const expectedResult = {
     status: false,
     message: 'Something went wrong'
   }
 
   UserMock.expects('find').yields(expectedResult, null);
-  User.find((err, _) => {
-    UserMock.verify();
-    UserMock.restore();
-
+  await User.find((err, _) => {
     t.false(false);
     t.is(err.message, expectedResult.message);
   });
 });
 
 // Specific user tests.
-test('should pass if user is found.', t => {
-  const UserMock = sinon.mock(User);
+test('should pass if user is found.', async t => {
   const expectedResult = {
     status: true,
     user: {}
   };
 
   UserMock.expects('find').withArgs({ _id: 69420 }).yields(null, expectedResult);
-  User.find({ _id: 69420 }, (_, res: MockUserDoc) => {
-    UserMock.verify();
-    UserMock.restore()
-
+  await User.find({ _id: 69420 }, (_, res: MockUserDoc) => {
     t.true(res.status);
     t.is(typeof res.user, 'object')
   });
 });
 
-test('should fail if user is not found', t => {
-  const UserMock = sinon.mock(User);
+test('should fail if user is not found', async t => {
   const expectedResult = {
     status: false,
     message: 'User not found.'
   }
 
   UserMock.expects('find').withArgs({ _id: 69420 }).yields(expectedResult, null);
-  User.find({ _id: 69420 }, (err, _) => {
-    UserMock.verify();
-    UserMock.restore();
-
+  await User.find({ _id: 69420 }, (err, _) => {
     t.false(err.status);
     t.is(err.message, expectedResult.message);
   });
 });
 
 // User creation tests
-test('should pass if a new user is created', t => {
-  const user = new User({
-    username: 'mock.user'
-  });
-
-  const UserMock = sinon.mock(user);
+test('should pass if a new user is created', async t => {
   const expectedResult = {
     status: true,
     user: {}
   };
 
-  UserMock.expects('save').yields(null, expectedResult);
-  user.save((_, res: MockUserDoc) => {
-    UserMock.verify();
-    UserMock.restore();
-
+  UserDocMock.expects('save').yields(null, expectedResult);
+  await UserDoc.save((_, res: MockUserDoc) => {
     t.true(res.status);
     t.is(typeof res.user, 'object');
   });
+
+  UserDocMock.verify();
+  UserDocMock.restore();
 });
 
-test('should error if user is not saved', t => {
-  const user = new User({
-    username: 'mock.user'
-  });
-
-  const UserMock = sinon.mock(user);
+test('should error if user is not saved', async t => {
   const expectedResult = {
     status: false,
     message: 'Something went wrong'
   };
 
-  UserMock.expects('save').yields(expectedResult, null);
-  user.save((err, _) => {
-    UserMock.verify();
-    UserMock.restore();
-
+  UserDocMock.expects('save').yields(expectedResult, null);
+  await UserDoc.save((err, _) => {
     t.false(err.status);
     t.is(err.message, expectedResult.message);
   });
+
+  UserDocMock.verify();
+  UserDocMock.restore();
 });
 
 // User updating
-test('should update a user by id', t => {
-  const UserMock = sinon.mock(User);
+test('should update a user by id', async t => {
   const expectedResult = {
     status: true,
   };
@@ -132,16 +129,12 @@ test('should update a user by id', t => {
           .withArgs({ _id: 69420 }, { username: 'mock.user' })
           .yields(null, expectedResult);
 
-  User.update({ _id: 69420 }, { username: 'mock.user' }, (_, raw) => {
-    UserMock.verify();
-    UserMock.restore();
-
+  await User.update({ _id: 69420 }, { username: 'mock.user' }, (_, raw) => {
     t.true(raw.status);
   });
 });
 
-test('should return error if update action failed', t => {
-  const UserMock = sinon.mock(User);
+test('should return error if update action failed', async t => {
   const expectedResult = {
     status: false,
     message: 'Something went wrong'
@@ -151,93 +144,63 @@ test('should return error if update action failed', t => {
           .withArgs({ _id: 69420 }, { username: 'mock.user' })
           .yields(expectedResult, null);
 
-  User.update({ _id: 69420 }, { username: 'mock.user' }, (err, _) => {
-    UserMock.verify();
-    UserMock.restore();
-
+  await User.update({ _id: 69420 }, { username: 'mock.user' }, (err, _) => {
     t.false(err.status);
     t.is(err.message, expectedResult.message);
   });
 });
 
 // Delete user
-test('should delete a user by id', t => {
-  const UserMock = sinon.mock(User);
+test('should delete a user by id', async t => {
   const expectedResult = {
     status: true,
     message: 'User deleted'
   };
 
   UserMock.expects('remove').withArgs({ _id: 1 }).yields(null, expectedResult);
-  User.remove({ _id: 1 }, err => {
-    UserMock.verify();
-    UserMock.restore();
-
+  await User.remove({ _id: 1 }, err => {
     t.is(err, null);
   });
 });
 
-test('should error out if delete user by id failed', t => {
-  const UserMock = sinon.mock(User);
+test('should error out if delete user by id failed', async t => {
   const expectedResult = {
     status: false,
     message: 'Something went wrong'
   };
 
   UserMock.expects('remove').withArgs({ _id: 1 }).yields(expectedResult, null);
-  User.remove({ _id: 1 }, err => {
-    UserMock.verify();
-    UserMock.restore();
-
+  await User.remove({ _id: 1 }, err => {
     t.is(err.status, false);
     t.is(err.message, expectedResult.message);
   });
 });
 
 // User password checking
-test('should pass if user password is right', async (t) => {
-  const user = new User({
-    password: 'test1234'
-  });
+test('should pass if user password is right', async t => {
+  UserDocMock.expects('isValidPassword').withArgs(fakeUserData.password).returns(true);
 
-  const UserMock = sinon.mock(user);
+  const isValid = await UserDoc.isValidPassword(fakeUserData.password);
 
-  UserMock.expects('isValidPassword').withArgs('test1234').returns(true);
-
-  const isValid = await user.isValidPassword('test1234');
-
-  UserMock.verify();
-  UserMock.restore();
+  UserDocMock.verify();
+  UserDocMock.restore();
 
   t.true(isValid);
 });
 
-test('should pass if user password is wrong', async (t) => {
-  const user = new User({
-    password: 'test1234'
-  });
+test('should pass if user password is wrong', async t => {
+  UserDocMock.expects('isValidPassword').withArgs('wrongpass').returns(false);
 
-  const UserMock = sinon.mock(user);
+  const isValid = await UserDoc.isValidPassword('wrongpass');
 
-  UserMock.expects('isValidPassword').withArgs('wrongpass').returns(false);
-
-  const isValid = await user.isValidPassword('wrongpass');
-
-  UserMock.verify();
-  UserMock.restore();
+  UserDocMock.verify();
+  UserDocMock.restore();
 
   t.false(isValid);
 });
 
 test('should pass if user creation validates properly', t => {
-  const user = new User({
-    email: 'mock@user.com',
-    fullName: 'Mock User',
-    username: 'mock.user',
-    password: 'mock1234'
-  });
-
-  const error = user.validateSync();
+  const error = UserDoc.validateSync();
 
   t.is(error, undefined);
 });
