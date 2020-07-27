@@ -2,7 +2,7 @@ import { Request, Response } from 'express';
 import { isValidObjectId } from 'mongoose';
 import { isEmpty, mapValues } from 'lodash';
 
-import Story from '../models/Story';
+import Story, { allowedChanges } from '../models/Story';
 import logger from '../middleware/logger';
 import { badRequestResponse, serverErrResponse } from '../helpers/response';
 
@@ -12,6 +12,12 @@ interface CreateData {
   content: string;
   category: string;
   tags?: string[];
+}
+
+interface UpdateData {
+  title?: string;
+  content?: string;
+  category?: string;
 }
 
 // Utils
@@ -117,7 +123,12 @@ class StoryHandler {
   update = async (req: Request, res: Response) => {
     // Get the story's ID
     const storyID: string = req.params.storyID;
+    const updateData: UpdateData = req.body;
+
     checkStoryID(res, storyID);
+
+    // Get current user in req context.
+    const currentUser: any = req.user;
 
     try {
       // Query the DB for the story
@@ -126,11 +137,42 @@ class StoryHandler {
         return storyNotFound(res);
       }
 
-      /* TODO:
-        - Check if the current user is the story's author.
-        - Update the story based on given req.body values.
-      */
-      
+      if (currentUser._id !== story.author) {
+        return res.status(403).json({
+          message: 'This story does not belong to the user.',
+          error: 'user_unauthorized'
+        });
+      }
+
+      for (const [key, value] of Object.entries(updateData)) {
+        // Check if key is allowed.
+        if (allowedChanges.includes(key)) {
+          // Update the story.
+          story[key] = value;
+        }
+      }
+
+      // Validate changes
+      const validationErr = story.validateSync();
+
+      if (validationErr) {
+        const fieldErrors = mapValues(validationErr.errors, 'message');
+
+        // Validation error response.
+        return res.status(400).json({
+          message: 'Story creation failed.',
+          errors: fieldErrors,
+        });
+      }
+
+      // Save changes and log event.
+      await story.save();
+      logger.log('info', `User <${ currentUser._id }> updated a Story <${ story._id }>`)
+
+      res.status(200).json({
+        message: `Story has been updated.`,
+      });
+
     } catch (error) {
       // Log and respond to the error.
       logger.log('error', `An error occured while fetching the story -> ${error}`);
@@ -143,6 +185,9 @@ class StoryHandler {
     const storyID: string = req.params.storyID;
     checkStoryID(res, storyID);
 
+    // Get current user in req context.
+    const currentUser: any = req.user;
+
     try {
       // Query the DB for the story
       const story = await Story.findById(storyID);
@@ -151,11 +196,22 @@ class StoryHandler {
         return storyNotFound(res);
       }
 
-      // TODO: Implement author checking or admin role for deletion.
+      // Check if user may not be the author.
+      // @TODO: Check if the user is an admin
+      if (currentUser._id !== story.author) {
+        return res.status(403).json({
+          message: 'This story does not belong to the user.',
+          error: 'user_unauthorized'
+        });
+      }
 
-      res.status(501).json({
-        message: 'This route hasn\'t been implemented yet.',
-        data: req.user
+      // Delete the story and log the event.
+      await Story.deleteOne({ _id: storyID });
+
+      logger.log('info', `User <${ currentUser._id }> deleted a Story <${ story._id }>`);
+
+      res.status(200).json({
+        message: `Story <${ story._id }> has successfully been deleted`,
       });
       
     } catch (error) {
