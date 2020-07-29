@@ -3,7 +3,6 @@ import { isValidObjectId } from 'mongoose';
 import { isEmpty, mapValues } from 'lodash';
 
 import Story, { allowedChanges } from '../models/Story';
-import { roles } from '../models/User';
 import logger from '../middleware/logger';
 import { badRequestResponse, serverErrResponse } from '../helpers/response';
 
@@ -70,11 +69,6 @@ class StoryHandler {
       badRequestResponse(res, 'Create data not found!');
       return;
     }
-
-    /* TODO:
-      - Make sure that RBAC has been implemented.
-      - Check if the user has the privileges to create a post.
-    */
 
     // Get current user data passed into context by JWT.
     const currentUser: any = req.user;
