@@ -7,9 +7,14 @@ import UserHandler from '../../src/handlers/userHandler';
 import User from '../../src/models/User';
 
 const handler = new UserHandler();
-const username: string = 'test.user';
 
 const UserMock = sinon.mock(User);
+const username: string = 'test.user';
+
+test.afterEach('Verify and Restore mock.', t => {
+  UserMock.verify();
+  UserMock.restore();
+});
 
 test('should pass if user is not found', async t => {
   const req = mockRequest({
@@ -26,9 +31,6 @@ test('should pass if user is not found', async t => {
 
   // Wait for request to resolve.
   await handler.get(req, res);
-
-  UserMock.verify();
-  UserMock.restore();
 
   t.true(res.status.calledWith(404));
   t.true(res.json.calledWithMatch({
@@ -53,9 +55,6 @@ test('should pass if user is found', async t => {
           .returns(fakeUser);
 
   await handler.get(req, res);
-
-  UserMock.verify();
-  UserMock.restore();
 
   t.true(res.status.calledWith(200));
   t.true(res.json.calledWithMatch({

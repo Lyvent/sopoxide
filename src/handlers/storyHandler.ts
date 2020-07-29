@@ -52,7 +52,7 @@ class StoryHandler {
 
       res.status(200).json({
         message: 'Story data sent.',
-        story: story,
+        story: story.toJSON(),
       });
       
     } catch (error) {
@@ -112,7 +112,7 @@ class StoryHandler {
 
       res.status(201).json({
         message: 'Created a new story.',
-        story: newStory,
+        story: newStory.toJSON(),
       });
 
     } catch (error) {

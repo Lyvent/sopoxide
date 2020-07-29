@@ -44,6 +44,16 @@ const StorySchema = new Schema({
 // Plugins
 StorySchema.plugin(mongoosePaginate);
 
+/* istanbul ignore next */
+StorySchema.set('toJSON', {
+  getters: true,
+  transform: (_doc, ret) => {
+    delete ret.id;
+
+    return ret;
+  }
+});
+
 // Model
 const Story = model('Story', StorySchema);
 
