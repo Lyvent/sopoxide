@@ -170,7 +170,7 @@ class StoryHandler {
       logger.log('info', `User <${ currentUser._id }> updated a Story <${ story._id }>`)
 
       res.status(200).json({
-        message: `Story has been updated.`,
+        message: 'Story has been updated.',
       });
 
     } catch (error) {
@@ -196,9 +196,8 @@ class StoryHandler {
         return storyNotFound(res);
       }
 
-      // Check if user may not be the author.
-      // @TODO: Check if the user is an admin
-      if (currentUser._id !== story.author) {
+      // Check if user may not be the author or isn't an admin.
+      if (currentUser._id !== story.author || currentUser.role !== 'admin') {
         return res.status(403).json({
           message: 'This story does not belong to the user.',
           error: 'user_unauthorized'

@@ -200,14 +200,14 @@ test('should pass if user password is wrong', async t => {
 });
 
 test('should return false if user is not an admin', t => {
-  const isAdmin = UserDoc.isAdmin();
+  const isAdmin: boolean = UserDoc.isAdmin();
 
   t.false(isAdmin);
 });
 
 test('should return true if user is an admin', t => {
   UserDoc.role = 'admin';
-  const isAdmin = UserDoc.isAdmin();
+  const isAdmin: boolean = UserDoc.isAdmin();
 
   t.true(isAdmin);
 });
