@@ -14,3 +14,6 @@ const handler = new StoryHandler();
   - Inject fake user data into request.
   - Create fake story and mocks.
 */
+test('Not implemented', t => {
+  t.pass();
+});

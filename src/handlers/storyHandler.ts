@@ -81,29 +81,28 @@ class StoryHandler {
       });
     }
 
-    // Create a new story
-    const story = new Story({
-      title: createData.title,
-      content: createData.content,
-      author: currentUser._id,
-      category: createData.category,
-      tags: createData?.tags,
-    });
-
-    // Perform model validations
-    const validationErr = story.validateSync();
-    if (validationErr) {
-      const fieldErrors = mapValues(validationErr.errors, 'message');
-
-      // Validation error response.
-      return res.status(400).json({
-        message: 'Story creation failed.',
-        errors: fieldErrors,
-      });
-    }
-
-    // Try to save the story and send the data back to client.
+    // Create the story and send the data back to client.
     try {
+      const story = new Story({
+        title: createData.title,
+        content: createData.content,
+        author: currentUser._id,
+        category: createData.category,
+        tags: createData?.tags,
+      });
+
+      // Perform model validations
+      const validationErr = story.validateSync();
+      if (validationErr) {
+        const fieldErrors = mapValues(validationErr.errors, 'message');
+
+        // Validation error response.
+        return res.status(400).json({
+          message: 'Story creation failed.',
+          errors: fieldErrors,
+        });
+      }
+
       let newStory = await story.save();
 
       // Populate new story with author and assign it newStory.
