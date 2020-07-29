@@ -133,6 +133,7 @@ class StoryHandler {
     try {
       // Query the DB for the story
       const story = await Story.findById(storyID);
+
       if (!story) {
         return storyNotFound(res);
       }
@@ -160,7 +161,7 @@ class StoryHandler {
 
         // Validation error response.
         return res.status(400).json({
-          message: 'Story creation failed.',
+          message: 'Update validations failed.',
           errors: fieldErrors,
         });
       }

@@ -20,5 +20,5 @@ export const signUpLimiter = rateLimit({
   // 2 attempts to register every minute.
   windowMs: minutes(1),
   max: 2,
-  message: 'Too many signup attemps, please wait.'
+  message: 'Too many signup attempts, please wait.'
 });
