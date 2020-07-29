@@ -10,8 +10,8 @@ import {
 
 // Roles config.
 const roles = {
-  default: 'entry',
-  options: ['entry', 'user', 'moderator', 'admin']
+  default: 'user',
+  options: ['user', 'moderator', 'admin']
 }
 
 // Auth provider
@@ -65,7 +65,7 @@ const UserSchema = new Schema({
     default: Date.now
   },
 
-  // @TODO: Implement user confirmation.
+  // @TODO: Implement user confirmation system.
   confirmed: {
     type: Boolean,
     default: false
@@ -150,4 +150,4 @@ interface UserDoc extends Document {
 const User = model<UserDoc>('User', UserSchema);
 
 export default User;
-export { UserSchema, UserDoc };
+export { UserSchema, UserDoc, roles };

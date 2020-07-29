@@ -3,6 +3,7 @@ import { isValidObjectId } from 'mongoose';
 import { isEmpty, mapValues } from 'lodash';
 
 import Story, { allowedChanges } from '../models/Story';
+import { roles } from '../models/User';
 import logger from '../middleware/logger';
 import { badRequestResponse, serverErrResponse } from '../helpers/response';
 
@@ -77,6 +78,14 @@ class StoryHandler {
 
     // Get current user data passed into context by JWT.
     const currentUser: any = req.user;
+
+    // Check if the user has confirmed their account.
+    if (!currentUser.confirmed) {
+      return res.status(403).json({
+        message: 'You are not eligible to create posts.',
+        error: 'user_unauthorized'
+      });
+    }
 
     // Create a new story
     const story = new Story({

@@ -73,7 +73,6 @@ const issueJWT = (user: UserDoc): JWTData => {
   const payload = {
     sub: _id,
     iat: Math.floor(Date.now() / 1000),
-    role: user.role
   }
 
   const signedToken = jsonwebtoken.sign(payload, secret, {
