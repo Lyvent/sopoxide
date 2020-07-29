@@ -199,6 +199,19 @@ test('should pass if user password is wrong', async t => {
   t.false(isValid);
 });
 
+test('should return false if user is not an admin', t => {
+  const isAdmin = UserDoc.isAdmin();
+
+  t.false(isAdmin);
+});
+
+test('should return true if user is an admin', t => {
+  UserDoc.role = 'admin';
+  const isAdmin = UserDoc.isAdmin();
+
+  t.true(isAdmin);
+});
+
 test('should pass if user creation validates properly', t => {
   const error = UserDoc.validateSync();
 

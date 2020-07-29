@@ -72,8 +72,8 @@ const issueJWT = (user: UserDoc): JWTData => {
   // Create JWT Payload.
   const payload = {
     sub: _id,
-    iat: Math.floor(Date.now() / 1000)
-    // @TODO: Add user roles.
+    iat: Math.floor(Date.now() / 1000),
+    role: user.role
   }
 
   const signedToken = jsonwebtoken.sign(payload, secret, {

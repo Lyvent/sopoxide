@@ -8,8 +8,17 @@ import {
   nameRegex
 } from '../helpers/regex';
 
-// TODO: Implement Roles for RBAC
-// const roles: string[] = ['user', 'moderator', 'admin'];
+// Roles config.
+const roles = {
+  default: 'entry',
+  options: ['entry', 'user', 'moderator', 'admin']
+}
+
+// Auth provider
+const provider = {
+  default: 'local',
+  options: ['local', 'google']
+};
 
 const UserSchema = new Schema({
   email: {
@@ -62,11 +71,18 @@ const UserSchema = new Schema({
     default: false
   },
 
+  role: {
+    type: String,
+    required: true,
+    default: roles.default,
+    enum: roles.options
+  },
+
   provider: {
     type: String,
     required: true,
-    default: 'local',
-    enum: ['local', 'google']
+    default: provider.default,
+    enum: provider.options
   },
 
   // Used by external providers to identify the user.
@@ -99,11 +115,14 @@ UserSchema.pre('save', async function(next) {
 });
 
 // Methods and Plugins
-/* istanbul ignore next */
 UserSchema.methods.isValidPassword = async function(password: string): Promise<boolean> {
-  // INFO: Compares hashed password and user password to see if it matches.
   const matches: boolean = await bcrypt.compare(password, this.password);
   return matches;
+}
+
+UserSchema.methods.isAdmin = function(): boolean {
+  const isAdmin: boolean = (this.role === 'admin' ? true : false);
+  return isAdmin;
 }
 
 /* istanbul ignore next */
@@ -124,6 +143,8 @@ UserSchema.plugin(uniqueValidator);
 // Extend User Document
 interface UserDoc extends Document {
   isValidPassword(password: string): Promise<boolean>;
+  isAdmin(): boolean;
+  role: string;
 }
 
 const User = model<UserDoc>('User', UserSchema);
