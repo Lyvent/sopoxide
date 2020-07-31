@@ -66,8 +66,7 @@ class StoryHandler {
     // Grab json body content and check if it exists.
     const createData: CreateData = req.body;
     if (isEmpty(createData)) {
-      badRequestResponse(res, 'Create data not found!');
-      return;
+      return badRequestResponse(res, 'Create data not found!');
     }
 
     // Get current user data passed into context by JWT.
@@ -225,3 +224,4 @@ class StoryHandler {
 }
 
 export default StoryHandler;
+export { CreateData, UpdateData };
